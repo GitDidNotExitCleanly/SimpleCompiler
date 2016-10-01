@@ -1,3 +1,8 @@
+## Compiler
+This compiler translate a subset of C language (see "rules" directory for more details)
+into Java bytecode, which then can be run on the JVM.
+The output .class file is in the "out" directory
+
 ## Building project
 In order to build the project you must have Ant installed. If you are using an IDE, then you can import the build file. Otherwise, you can build the project from the commandline by typing:
 ```
