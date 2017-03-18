@@ -1,19 +1,14 @@
 // The program top AST node (a list of variable declarations followed by a list of procedure definition and finally the main procedure definition)
 Program    ::= VarDecl* Procedure* Procedure
 
-
 // Types
 Type       ::= INT | CHAR | VOID
-
-
 
 // Variable declaration
 VarDecl    ::= Type Var
 
 // Procedure definition (the String is the name of the procedure)
 Procedure  ::= Type String VarDecl* Block
-
-
 
 // Expressions
 Expr       ::= IntLiteral | StrLiteral | ChrLiteral | Var | FunCallExpr | BinOp
@@ -33,15 +28,11 @@ FunCallExpr ::= String Expr*
 BinOp      ::= Expr Op Expr
 Op         ::= ADD | SUB | MUL | DIV | MOD | GT | LT | GE | LE | NE | EQ
 
-
-
-
 // Statements
 Stmt       ::= Block | While | If | Assign | Return | FunCallStmt
 
 // Function call (the String corresponds to the name of the function to call and the Expr* is the list of arguments)
 FunCallStmt ::= String Expr*
-
 
 // While loop statement : while (Expr) Stmt;
 While      ::= Expr Stmt

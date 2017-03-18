@@ -134,6 +134,7 @@ public class CodeGeneratorVisitor implements ast.ASTVisitor<Void> {
 
 	@Override
 	public Void visitAssign(Assign a) {
+/*
 		a.expr.accept(this);
 		if (a.var.varDecl.levels == 0) {
 			mv.visitFieldInsn(Opcodes.PUTSTATIC, "Main", a.var.name, getTypeInternalName(a.var.varDecl.type));
@@ -145,6 +146,7 @@ public class CodeGeneratorVisitor implements ast.ASTVisitor<Void> {
 			}
 			mv.visitVarInsn(Opcodes.ISTORE, slot);
 		}
+*/
 		return null;
 	}
 
@@ -161,6 +163,7 @@ public class CodeGeneratorVisitor implements ast.ASTVisitor<Void> {
 
 	@Override
 	public Void visitVar(Var v) {
+/*
 		if (v.varDecl.levels == 0) {
 			mv.visitFieldInsn(Opcodes.GETSTATIC, "Main", v.name, getTypeInternalName(v.varDecl.type));
 		} else {
@@ -171,6 +174,7 @@ public class CodeGeneratorVisitor implements ast.ASTVisitor<Void> {
 			}
 			mv.visitVarInsn(Opcodes.ILOAD, slot);
 		}
+*/
 		return null;
 	}
 

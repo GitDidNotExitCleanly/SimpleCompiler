@@ -12,13 +12,12 @@ public class ProcSymbol extends Symbol {
 	}
 
 	@Override
-	public boolean isVar() {
+	public boolean isVarDecl() {
 		return false;
 	}
 
 	@Override
-	public boolean isProc() {
+	public boolean isProcedure() {
 		return true;
 	}
-
 }

@@ -12,13 +12,12 @@ public class VarSymbol extends Symbol {
 	}
 
 	@Override
-	public boolean isVar() {
+	public boolean isVarDecl() {
 		return true;
 	}
 
 	@Override
-	public boolean isProc() {
+	public boolean isProcedure() {
 		return false;
 	}
-
 }

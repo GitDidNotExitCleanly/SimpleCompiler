@@ -177,7 +177,7 @@ public class Parser {
 		if (accept(TokenClass.INT, TokenClass.CHAR)) {
 			procs.add(parseProc());
 			procs.addAll(parseProcrep());
-		} else if (accept(TokenClass.VOID)) {
+		} else if (accept(TokenClass.VOID)) {	
 			Token lookahead = lookAhead(1);
 			if (lookahead.tokenClass == TokenClass.IDENTIFIER) {
 				procs.add(parseProc());
@@ -196,7 +196,7 @@ public class Parser {
 	private List<Stmt> parseStmtlist() {
 		List<Stmt> stmts = new ArrayList<Stmt>();
 		if (accept(TokenClass.LBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.IDENTIFIER, TokenClass.RETURN,
-				TokenClass.PRINT, TokenClass.READ)) {
+				TokenClass.PRINT, TokenClass.READ)) {	
 			stmts.add(parseStmt());
 			stmts.addAll(parseStmtlist());
 		} else if (accept(TokenClass.RBRA)) {
@@ -207,7 +207,7 @@ public class Parser {
 		return stmts;
 	}
 
-	private Procedure parseProc() {
+	private Procedure parseProc() {	
 		Type type = parseType();
 		String name = token.data;
 		expect(TokenClass.IDENTIFIER);
@@ -284,14 +284,15 @@ public class Parser {
 		return null;
 	}
 
+	
 	private Stmt parseElsestmt() {
 		if (accept(TokenClass.ELSE)) {
 			nextToken();
 			return parseStmt();
-		} else if (accept(TokenClass.LBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.IDENTIFIER, TokenClass.RETURN,
+		} else if (accept(TokenClass.LBRA,TokenClass.RBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.IDENTIFIER, TokenClass.RETURN,
 				TokenClass.PRINT, TokenClass.READ)) {
 		} else {
-			error(TokenClass.ELSE, TokenClass.LBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.IDENTIFIER,
+			error(TokenClass.ELSE, TokenClass.LBRA,TokenClass.RBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.IDENTIFIER,
 					TokenClass.RETURN, TokenClass.PRINT, TokenClass.READ);
 		}
 		return null;
@@ -451,7 +452,7 @@ public class Parser {
 			expect(TokenClass.RPAR);
 			Stmt stmt = parseStmt();
 			return new While(expr, stmt);
-		} else if (accept(TokenClass.IF)) {
+		} else if (accept(TokenClass.IF)) {	
 			nextToken();
 			expect(TokenClass.LPAR);
 			Expr expr = parseExp();

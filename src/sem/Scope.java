@@ -18,17 +18,10 @@ public class Scope {
 
 	public Symbol lookup(String name) {
 		Symbol result = lookupCurrent(name);
-		if (result == null) {
-			if (this.outer != null) {
-				result = this.outer.lookupCurrent(name);
-				if (result == null) {
-					result = this.outer.lookup(name);
-				}
-				return result;
-			} else {
-				return null;
-			}
-		} else {
+		if (result == null && this.outer != null) {
+			return this.outer.lookup(name);
+		}
+		else {
 			return result;
 		}
 	}

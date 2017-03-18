@@ -6,8 +6,7 @@ public abstract class Symbol {
 	public Symbol(String name) {
 		this.name = name;
 	}
-
-	public abstract boolean isVar();
-
-	public abstract boolean isProc();
+	
+	public abstract boolean isVarDecl();
+	public abstract boolean isProcedure();
 }

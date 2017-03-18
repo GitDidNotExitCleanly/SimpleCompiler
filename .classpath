@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" output="bin" path="src"/>
-	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
-	<classpathentry kind="lib" path="D:/Eclipse_WorkStation/cdubach-ct-15-16/lib/asm-all-4.2.jar"/>
-	<classpathentry kind="lib" path="D:/eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar"/>
+	<classpathentry kind="lib" path="lib/asm-all-4.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
