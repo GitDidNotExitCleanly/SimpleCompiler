@@ -19,10 +19,11 @@ public class LocalVariableTable {
 	}
 
 	public void add(Var v) {
-		this.arr.add(v.varDecl);
+		// this.arr.add(v.varDecl);
 	}
 
 	public int indexOf(Var v) {
-		return this.arr.indexOf(v.varDecl);
+		return 0;
+		// return this.arr.indexOf(v.varDecl);
 	}
 }

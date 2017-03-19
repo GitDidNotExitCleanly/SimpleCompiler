@@ -15,7 +15,6 @@ int deposit(int amount) {
 // Withdraw money from the account
 // Restriction: account - amount must be positive.
 int withdraw(int amount) {
-	/*
   if (balance - amount >= 0) {
     amount = -1 * amount;
     deposit(amount);
@@ -23,7 +22,6 @@ int withdraw(int amount) {
   } else {
     return -1;
   }
-  */
 }
 
 // Computes the number of units of unit_size to dispense for amount.
@@ -79,7 +77,6 @@ int select_service() {
 
 // Use a particular service
 void use_service(int service) {
-/*
   int amount; int status;
   if (service < 1) print_s("error: Invalid service.\n");
   else if (service > 2) print_s("error: Invalid service.\n");
@@ -119,12 +116,10 @@ void use_service(int service) {
       }
     }
   }
-*/  
 }
 
 // Ask whether to the user wishes to do another transaction
 int new_transaction() {
-/*
   char yesno;
   print_s("Do you wish to carry out another transaction? (y/n)> ");
   yesno = read_c();
@@ -132,7 +127,6 @@ int new_transaction() {
   if (yesno == 'y') return 1;
   else if (yesno == 'Y') return 1;
   else return 0;
-*/  
 }
 
 

@@ -1,5 +1,7 @@
 package sem;
 
+import java.util.ArrayList;
+
 import ast.*;
 
 public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
@@ -21,14 +23,14 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 		p.main.accept(this);
 		return null;
 	}
-	
+
 	@Override
 	public Void visitVarDecl(VarDecl vd) {
 		Symbol vs = this.currentScope.lookupCurrent(vd.var.name);
 		if (vs == null) {
 			this.currentScope.put(new VarSymbol(vd));
 		} else {
-			error("Invalid overload of '"+vd.var.name+"'");
+			error("[Name Analysis] Invalid overload of '" + vd.var.name + "'");
 		}
 		return null;
 	}
@@ -37,10 +39,9 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 	public Void visitVar(Var v) {
 		Symbol vs = this.currentScope.lookup(v.name);
 		if (vs != null && vs.isVarDecl()) {
-			v.varDecl = ((VarSymbol) vs).varDecl;
-		}
-		else {
-			error("Variable \"" + v.name + "\" is not declared");
+			v.type = ((VarSymbol) vs).varDecl.type;
+		} else {
+			error("[Name Analysis] Variable '" + v.name + "' is not declared");
 		}
 		return null;
 	}
@@ -51,7 +52,7 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 		if (ps == null) {
 			this.currentScope.put(new ProcSymbol(p));
 		} else {
-			error("Invalid overload of '"+p.name+"'");
+			error("[Name Analysis] Invalid overload of '" + p.name + "'");
 		}
 		Scope outerScope = this.currentScope;
 		this.currentScope = new Scope(outerScope);
@@ -71,84 +72,74 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 	@Override
 	public Void visitFunCallExpr(FunCallExpr f) {
 		Symbol ps = this.currentScope.lookup(f.name);
-		if (ps != null && ps.isProcedure() && f.exprs.size() == ((ProcSymbol)ps).proc.params.size()) {
+		if (ps != null && ps.isProcedure() && f.exprs.size() == ((ProcSymbol) ps).proc.params.size()) {
 			for (Expr e : f.exprs) {
 				e.accept(this);
 			}
-			f.p = ((ProcSymbol)ps).proc;
-		}
-		else {		
+			f.type = ((ProcSymbol) ps).proc.type;
+			f.params = ((ProcSymbol) ps).proc.params;
+		} else {
 			// deal with IO functions (simulating linking)
-			if (f.name.compareTo("print_c") == 0 || f.name.compareTo("print_i") == 0 || f.name.compareTo("print_s") == 0) {
-				if (f.exprs.size() == 1) {
-					for (Expr e : f.exprs) {
-						e.accept(this);
-					}
-				}
-				else {
-					if (f.exprs.size() < 1) {
-						error("Procedure \"" + f.name + "\" has too few parameters");
-					}
-					else {
-						error("Procedure \"" + f.name + "\" has too many parameters");
-					}
-				}
-			} 
-			else if (f.name.compareTo("read_c") == 0 || f.name.compareTo("read_i") == 0) {
+			if (f.name.compareTo("read_c") == 0) {
 				if (f.exprs.size() == 0) {
-					for (Expr e : f.exprs) {
-						e.accept(this);
-					}
+					f.type = Type.CHAR;
+					f.params = new ArrayList<VarDecl>();
+				} else {
+					error("[Name Analysis] Procedure '" + f.name + "' has too many parameters");
 				}
-				else {
-					error("Procedure \"" + f.name + "\" has too many parameters");
+			} else if (f.name.compareTo("read_i") == 0) {
+				if (f.exprs.size() == 0) {
+					f.type = Type.INT;
+					f.params = new ArrayList<VarDecl>();
+				} else {
+					error("[Name Analysis] Procedure '" + f.name + "' has too many parameters");
 				}
-			} 
-			else {
-				error("Procedure \"" + f.name + "\" is not declared");
+			} else {
+				error("[Name Analysis] Procedure '" + f.name + "' is not declared");
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public Void visitFunCallStmt(FunCallStmt f) {	
+	public Void visitFunCallStmt(FunCallStmt f) {
 		Symbol ps = this.currentScope.lookup(f.name);
-		if (ps != null && ps.isProcedure() && f.exprs.size() == ((ProcSymbol)ps).proc.params.size()) {
+		if (ps != null && ps.isProcedure() && f.exprs.size() == ((ProcSymbol) ps).proc.params.size()) {
 			for (Expr e : f.exprs) {
 				e.accept(this);
 			}
-			f.p = ((ProcSymbol)ps).proc;
-		}
-		else {		
+			f.params = ((ProcSymbol) ps).proc.params;
+		} else {
 			// deal with IO functions (simulating linking)
-			if (f.name.compareTo("print_c") == 0 || f.name.compareTo("print_i") == 0 || f.name.compareTo("print_s") == 0) {
+			if (f.name.compareTo("print_c") == 0 || f.name.compareTo("print_i") == 0
+					|| f.name.compareTo("print_s") == 0) {
 				if (f.exprs.size() == 1) {
 					for (Expr e : f.exprs) {
 						e.accept(this);
 					}
-				}
-				else {
+					f.params = new ArrayList<VarDecl>();
+					if (f.name.compareTo("print_c") == 0) {
+						f.params.add(new VarDecl(Type.CHAR, new Var("c")));
+					} else if (f.name.compareTo("print_i") == 0) {
+						f.params.add(new VarDecl(Type.INT, new Var("i")));
+					} else {
+						f.params.add(new VarDecl(Type.VOID, new Var("v")));
+					}
+				} else {
 					if (f.exprs.size() < 1) {
-						error("Procedure \"" + f.name + "\" has too few parameters");
-					}
-					else {
-						error("Procedure \"" + f.name + "\" has too many parameters");
+						error("[Name Analysis] Procedure '" + f.name + "' has too few parameters");
+					} else {
+						error("[Name Analysis] Procedure '" + f.name + "' has too many parameters");
 					}
 				}
-			} 
-			else if (f.name.compareTo("read_c") == 0 || f.name.compareTo("read_i") == 0) {
+			} else if (f.name.compareTo("read_c") == 0 || f.name.compareTo("read_i") == 0) {
 				if (f.exprs.size() == 0) {
-					for (Expr e : f.exprs) {
-						e.accept(this);
-					}
+					f.params = new ArrayList<VarDecl>();
+				} else {
+					error("[Name Analysis] Procedure '" + f.name + "' has too many parameters");
 				}
-				else {
-					error("Procedure \"" + f.name + "\" has too many parameters");
-				}
-			} 
-			else {
-				error("Procedure \"" + f.name + "\" is not declared");
+			} else {
+				error("[Name Analysis] Procedure '" + f.name + "' is not declared");
 			}
 		}
 		return null;

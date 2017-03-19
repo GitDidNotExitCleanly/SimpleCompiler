@@ -20,8 +20,7 @@ public class Scope {
 		Symbol result = lookupCurrent(name);
 		if (result == null && this.outer != null) {
 			return this.outer.lookup(name);
-		}
-		else {
+		} else {
 			return result;
 		}
 	}

@@ -112,15 +112,16 @@ public class CodeGeneratorVisitor implements ast.ASTVisitor<Void> {
 		for (Expr e : f.exprs) {
 			e.accept(this);
 		}
-		if (f.name.compareTo("print_c") == 0 || f.name.compareTo("print_i") == 0 || f.name.compareTo("print_s") == 0
-				|| f.name.compareTo("read_c") == 0 || f.name.compareTo("read_i") == 0) {
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "IO", f.name, getMethodDescriptor(f.p));
-		} else {
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "Main", f.name, getMethodDescriptor(f.p));
-			if (f.p.type != Type.VOID) {
-				mv.visitInsn(Opcodes.POP);
-			}
-		}
+		/*
+		 * if (f.name.compareTo("print_c") == 0 || f.name.compareTo("print_i")
+		 * == 0 || f.name.compareTo("print_s") == 0 ||
+		 * f.name.compareTo("read_c") == 0 || f.name.compareTo("read_i") == 0) {
+		 * mv.visitMethodInsn(Opcodes.INVOKESTATIC, "IO", f.name,
+		 * getMethodDescriptor(f.p)); } else {
+		 * mv.visitMethodInsn(Opcodes.INVOKESTATIC, "Main", f.name,
+		 * getMethodDescriptor(f.p)); if (f.p.type != Type.VOID) {
+		 * mv.visitInsn(Opcodes.POP); } }
+		 */
 		return null;
 	}
 
@@ -134,19 +135,13 @@ public class CodeGeneratorVisitor implements ast.ASTVisitor<Void> {
 
 	@Override
 	public Void visitAssign(Assign a) {
-/*
-		a.expr.accept(this);
-		if (a.var.varDecl.levels == 0) {
-			mv.visitFieldInsn(Opcodes.PUTSTATIC, "Main", a.var.name, getTypeInternalName(a.var.varDecl.type));
-		} else {
-			int slot = local.indexOf(a.var);
-			if (slot == -1) {
-				local.add(a.var);
-				slot = local.size() - 1;
-			}
-			mv.visitVarInsn(Opcodes.ISTORE, slot);
-		}
-*/
+		/*
+		 * a.expr.accept(this); if (a.var.varDecl.levels == 0) {
+		 * mv.visitFieldInsn(Opcodes.PUTSTATIC, "Main", a.var.name,
+		 * getTypeInternalName(a.var.varDecl.type)); } else { int slot =
+		 * local.indexOf(a.var); if (slot == -1) { local.add(a.var); slot =
+		 * local.size() - 1; } mv.visitVarInsn(Opcodes.ISTORE, slot); }
+		 */
 		return null;
 	}
 
@@ -163,18 +158,12 @@ public class CodeGeneratorVisitor implements ast.ASTVisitor<Void> {
 
 	@Override
 	public Void visitVar(Var v) {
-/*
-		if (v.varDecl.levels == 0) {
-			mv.visitFieldInsn(Opcodes.GETSTATIC, "Main", v.name, getTypeInternalName(v.varDecl.type));
-		} else {
-			int slot = local.indexOf(v);
-			if (slot == -1) {
-				local.add(v);
-				slot = local.size() - 1;
-			}
-			mv.visitVarInsn(Opcodes.ILOAD, slot);
-		}
-*/
+		/*
+		 * if (v.varDecl.levels == 0) { mv.visitFieldInsn(Opcodes.GETSTATIC,
+		 * "Main", v.name, getTypeInternalName(v.varDecl.type)); } else { int
+		 * slot = local.indexOf(v); if (slot == -1) { local.add(v); slot =
+		 * local.size() - 1; } mv.visitVarInsn(Opcodes.ILOAD, slot); }
+		 */
 		return null;
 	}
 
@@ -183,12 +172,15 @@ public class CodeGeneratorVisitor implements ast.ASTVisitor<Void> {
 		for (Expr e : f.exprs) {
 			e.accept(this);
 		}
-		if (f.name.compareTo("print_c") == 0 || f.name.compareTo("print_i") == 0 || f.name.compareTo("print_s") == 0
-				|| f.name.compareTo("read_c") == 0 || f.name.compareTo("read_i") == 0) {
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "IO", f.name, getMethodDescriptor(f.p));
-		} else {
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "Main", f.name, getMethodDescriptor(f.p));
-		}
+		/*
+		 * if (f.name.compareTo("print_c") == 0 || f.name.compareTo("print_i")
+		 * == 0 || f.name.compareTo("print_s") == 0 ||
+		 * f.name.compareTo("read_c") == 0 || f.name.compareTo("read_i") == 0) {
+		 * mv.visitMethodInsn(Opcodes.INVOKESTATIC, "IO", f.name,
+		 * getMethodDescriptor(f.p)); } else {
+		 * mv.visitMethodInsn(Opcodes.INVOKESTATIC, "Main", f.name,
+		 * getMethodDescriptor(f.p)); }
+		 */
 		return null;
 	}
 
