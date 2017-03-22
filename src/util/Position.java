@@ -1,8 +1,5 @@
 package util;
 
-/**
- * @author cdubach
- */
 public class Position {
 
 	final int line;

@@ -9,7 +9,6 @@ Finally, you will have to modify your parser so that it builds the AST as your a
 
 Note that you may favour a more iterative approach where you add AST nodes one by one, extend the printer and modify your parser as you go.
 We also encourage you to write small test programs that test every AST node as you are building them rather than trying to implement everything at once.
-If you encounter any problem, have any questions or find a bug with the newly provided files, please post a note on Piazza.
 
 ## 1. AST Nodes
 

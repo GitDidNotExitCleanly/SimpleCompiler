@@ -2,9 +2,6 @@ package lexer;
 
 import util.Position;
 
-/**
- * @author cdubach
- */
 public class Token {
 
 	public enum TokenClass {

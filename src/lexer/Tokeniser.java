@@ -5,9 +5,6 @@ import lexer.Token.TokenClass;
 import java.io.EOFException;
 import java.io.IOException;
 
-/**
- * @author cdubach
- */
 public class Tokeniser {
 
 	private Scanner scanner;

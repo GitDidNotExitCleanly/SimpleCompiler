@@ -19,3 +19,7 @@ You can clean the `bin` directory by typing:
 $ ant clean
 ```
 This command effectively deletes the `bin` directory.
+
+* The test codes provided need IO class file for IO functions
+* Therefore, copy the IO class file (in the lib/) to out/ directory 
+* when running the compiler

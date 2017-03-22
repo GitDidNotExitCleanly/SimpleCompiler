@@ -4,7 +4,8 @@ int is_prime(int n) {
   int i; int flag;
   i = 2;
   flag = 1;
-  while (i < n) {
+
+  while (i > n) {	  
     if (n % i == 0) flag = 0;
     i = i + 1;
   }

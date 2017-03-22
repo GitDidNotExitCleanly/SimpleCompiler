@@ -1,8 +1,8 @@
 package sem;
 
 /**
- * @author dhil An interface for semantic visitors. Exposes a method for
- *         extracting the number of errors encountered during an AST traversal.
+ * An interface for semantic visitors. Exposes a method for extracting the
+ * number of errors encountered during an AST traversal.
  */
 public interface SemanticVisitor<T> extends ast.ASTVisitor<T> {
 	/**

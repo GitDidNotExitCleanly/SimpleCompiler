@@ -28,9 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-/**
- * @author cdubach
- */
 public class Parser {
 
 	private Token token;

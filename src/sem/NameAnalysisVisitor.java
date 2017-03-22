@@ -37,9 +37,9 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitVar(Var v) {
-		Symbol vs = this.currentScope.lookup(v.name);
-		if (vs != null && vs.isVarDecl()) {
-			v.type = ((VarSymbol) vs).varDecl.type;
+		Symbol vs = this.currentScope.var_lookup(v.name);
+		if (vs != null) {
+			v.varDecl = ((VarSymbol) vs).varDecl;
 		} else {
 			error("[Name Analysis] Variable '" + v.name + "' is not declared");
 		}
@@ -71,26 +71,23 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitFunCallExpr(FunCallExpr f) {
-		Symbol ps = this.currentScope.lookup(f.name);
-		if (ps != null && ps.isProcedure() && f.exprs.size() == ((ProcSymbol) ps).proc.params.size()) {
+		Symbol ps = this.currentScope.proc_lookup(f.name);
+		if (ps != null && f.exprs.size() == ((ProcSymbol) ps).proc.params.size()) {
 			for (Expr e : f.exprs) {
 				e.accept(this);
 			}
-			f.type = ((ProcSymbol) ps).proc.type;
-			f.params = ((ProcSymbol) ps).proc.params;
+			f.proc = ((ProcSymbol) ps).proc;
 		} else {
 			// deal with IO functions (simulating linking)
 			if (f.name.compareTo("read_c") == 0) {
 				if (f.exprs.size() == 0) {
-					f.type = Type.CHAR;
-					f.params = new ArrayList<VarDecl>();
+					f.proc = new Procedure(Type.CHAR, null, new ArrayList<VarDecl>(), null);
 				} else {
 					error("[Name Analysis] Procedure '" + f.name + "' has too many parameters");
 				}
 			} else if (f.name.compareTo("read_i") == 0) {
 				if (f.exprs.size() == 0) {
-					f.type = Type.INT;
-					f.params = new ArrayList<VarDecl>();
+					f.proc = new Procedure(Type.INT, null, new ArrayList<VarDecl>(), null);
 				} else {
 					error("[Name Analysis] Procedure '" + f.name + "' has too many parameters");
 				}
@@ -103,12 +100,12 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitFunCallStmt(FunCallStmt f) {
-		Symbol ps = this.currentScope.lookup(f.name);
-		if (ps != null && ps.isProcedure() && f.exprs.size() == ((ProcSymbol) ps).proc.params.size()) {
+		Symbol ps = this.currentScope.proc_lookup(f.name);
+		if (ps != null && f.exprs.size() == ((ProcSymbol) ps).proc.params.size()) {
 			for (Expr e : f.exprs) {
 				e.accept(this);
 			}
-			f.params = ((ProcSymbol) ps).proc.params;
+			f.proc = ((ProcSymbol) ps).proc;
 		} else {
 			// deal with IO functions (simulating linking)
 			if (f.name.compareTo("print_c") == 0 || f.name.compareTo("print_i") == 0
@@ -117,13 +114,13 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 					for (Expr e : f.exprs) {
 						e.accept(this);
 					}
-					f.params = new ArrayList<VarDecl>();
+					f.proc = new Procedure(Type.VOID, null, new ArrayList<VarDecl>(), null);
 					if (f.name.compareTo("print_c") == 0) {
-						f.params.add(new VarDecl(Type.CHAR, new Var("c")));
+						f.proc.params.add(new VarDecl(Type.CHAR, new Var("c")));
 					} else if (f.name.compareTo("print_i") == 0) {
-						f.params.add(new VarDecl(Type.INT, new Var("i")));
+						f.proc.params.add(new VarDecl(Type.INT, new Var("i")));
 					} else {
-						f.params.add(new VarDecl(Type.VOID, new Var("v")));
+						f.proc.params.add(new VarDecl(Type.VOID, new Var("v")));
 					}
 				} else {
 					if (f.exprs.size() < 1) {
@@ -134,7 +131,11 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 				}
 			} else if (f.name.compareTo("read_c") == 0 || f.name.compareTo("read_i") == 0) {
 				if (f.exprs.size() == 0) {
-					f.params = new ArrayList<VarDecl>();
+					if (f.name.compareTo("read_c") == 0) {
+						f.proc = new Procedure(Type.CHAR, null, new ArrayList<VarDecl>(), null);
+					} else {
+						f.proc = new Procedure(Type.INT, null, new ArrayList<VarDecl>(), null);
+					}
 				} else {
 					error("[Name Analysis] Procedure '" + f.name + "' has too many parameters");
 				}

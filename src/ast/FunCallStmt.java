@@ -6,12 +6,12 @@ public class FunCallStmt extends Stmt {
 
 	public final String name;
 	public final List<Expr> exprs;
-	public List<VarDecl> params;
+	public Procedure proc;
 
 	public FunCallStmt(String name, List<Expr> exprs) {
 		this.name = name;
 		this.exprs = exprs;
-		this.params = null;
+		this.proc = null;
 	}
 
 	@Override

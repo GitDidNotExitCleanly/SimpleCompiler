@@ -46,14 +46,14 @@ public class Main {
 	}
 
 	public static void usage() {
-		System.out.println("Usage: java " + Main.class.getSimpleName() + " pass inputfile outputfile");
+		System.out.println("Usage: java " + Main.class.getSimpleName() + " pass inputfile");
 		System.out.println("where pass is either: -lexer, -parser, -ast, -sem or -gen");
 		System.exit(-1);
 	}
 
 	public static void main(String[] args) {
 
-		if (args.length != 3)
+		if (args.length != 2)
 			usage();
 
 		Mode mode = null;
@@ -79,7 +79,6 @@ public class Main {
 		}
 
 		File inputFile = new File(args[1]);
-		File outputFile = new File(args[2]);
 		Scanner scanner;
 		try {
 			scanner = new Scanner(inputFile);

@@ -2,7 +2,7 @@ package sem;
 
 /**
  * 
- * @author dhil A base class providing basic error accumulation.
+ * A base class providing basic error accumulation.
  */
 public abstract class BaseSemanticVisitor<T> implements SemanticVisitor<T> {
 	private int errors;

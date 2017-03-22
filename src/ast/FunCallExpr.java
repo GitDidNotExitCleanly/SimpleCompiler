@@ -6,12 +6,12 @@ public class FunCallExpr extends Expr {
 
 	public final String name;
 	public final List<Expr> exprs;
-	public List<VarDecl> params;
+	public Procedure proc;
 
 	public FunCallExpr(String name, List<Expr> exprs) {
 		this.name = name;
 		this.exprs = exprs;
-		this.params = null;
+		this.proc = null;
 	}
 
 	@Override

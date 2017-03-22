@@ -35,6 +35,5 @@ Your task is to implement a visitor that traverses the AST and identifies when t
 The goal of type analysis is to verified that the input program is well-typed and assign a type for each expression encountered.
 As seen during the course, the typing rule of SmallC are defined using a formal notation.
 You can find all the typing rules [here](./typing-rules.pdf).
-As usual, if you notice an error or if something is not clear, please post your question on Piazza.
 
 Your task consists of extending the `sem.TypeCheckVisitor` class and implement the type checking mechanism following the typyng rules.

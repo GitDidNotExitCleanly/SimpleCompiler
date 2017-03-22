@@ -2,9 +2,6 @@ package lexer;
 
 import java.io.*;
 
-/**
- * @author cdubach
- */
 public class Scanner {
 
 	BufferedReader input;

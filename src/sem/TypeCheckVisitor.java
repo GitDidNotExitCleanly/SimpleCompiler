@@ -35,8 +35,14 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 				error("[Type Checker] Return type of procedure '" + p.name + "' does not match the signature");
 			}
 		} else {
-			if (blockT != null && blockT != Type.VOID) {
-				error("[Type Checker] Return type of procedure '" + p.name + "' does not match the signature");
+			if (blockT == null) {
+				// add return statement to the procedure without a return
+				// statement
+				p.block.stmts.add(new Return(null));
+			} else {
+				if (blockT != Type.VOID) {
+					error("[Type Checker] Return type of procedure '" + p.name + "' does not match the signature");
+				}
 			}
 		}
 		return null;
@@ -61,19 +67,19 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitVar(Var v) {
-		return v.type;
+		return v.varDecl.type;
 	}
 
 	@Override
 	public Type visitFunCallExpr(FunCallExpr f) {
 		for (int i = 0; i < f.exprs.size(); i++) {
 			Type exprT = f.exprs.get(i).accept(this);
-			Type paramT = f.params.get(i).type;
+			Type paramT = f.proc.params.get(i).type;
 			if (exprT != paramT) {
 				error("[Type Checker] Function call '" + f.name + "' does not match its signature");
 			}
 		}
-		return f.type;
+		return f.proc.type;
 	}
 
 	@Override
@@ -117,7 +123,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 	public Type visitFunCallStmt(FunCallStmt f) {
 		for (int i = 0; i < f.exprs.size(); i++) {
 			Type exprT = f.exprs.get(i).accept(this);
-			Type paramT = f.params.get(i).type;
+			Type paramT = f.proc.params.get(i).type;
 			if (exprT != paramT) {
 				error("[Type Checker] Function call '" + f.name + "' does not match its signature");
 			}
@@ -155,7 +161,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitAssign(Assign a) {
-		Type varT = a.var.type;
+		Type varT = a.var.varDecl.type;
 		Type exprT = a.expr.accept(this);
 		if (varT != exprT) {
 			error("[Type Checker] The type of variable '" + a.var.name + "' does not match in ASSIGNMENT");

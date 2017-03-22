@@ -16,12 +16,29 @@ public class Scope {
 		this(null);
 	}
 
-	public Symbol lookup(String name) {
+	public Symbol proc_lookup(String name) {
 		Symbol result = lookupCurrent(name);
-		if (result == null && this.outer != null) {
-			return this.outer.lookup(name);
-		} else {
+		if (result != null && result.isProcedure()) {
 			return result;
+		} else {
+			if (this.outer != null) {
+				return this.outer.proc_lookup(name);
+			} else {
+				return null;
+			}
+		}
+	}
+
+	public Symbol var_lookup(String name) {
+		Symbol result = lookupCurrent(name);
+		if (result != null && result.isVarDecl()) {
+			return result;
+		} else {
+			if (this.outer != null) {
+				return this.outer.var_lookup(name);
+			} else {
+				return null;
+			}
 		}
 	}
 

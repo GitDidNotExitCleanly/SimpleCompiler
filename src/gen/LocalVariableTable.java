@@ -1,29 +1,28 @@
 package gen;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Hashtable;
+import java.util.Map;
 
-import ast.Var;
 import ast.VarDecl;
 
 public class LocalVariableTable {
 
-	private List<VarDecl> arr;
+	private Map<VarDecl, Integer> table;
 
 	public LocalVariableTable() {
-		this.arr = new ArrayList<VarDecl>();
+		this.table = new Hashtable<VarDecl, Integer>();
 	}
 
-	public int size() {
-		return this.arr.size();
+	public void put(VarDecl vd) {
+		int currentIndex = this.table.size();
+		this.table.put(vd, currentIndex);
 	}
 
-	public void add(Var v) {
-		// this.arr.add(v.varDecl);
+	public Integer get(VarDecl vd) {
+		return this.table.get(vd);
 	}
 
-	public int indexOf(Var v) {
-		return 0;
-		// return this.arr.indexOf(v.varDecl);
+	public void remove(VarDecl vd) {
+		this.table.remove(vd);
 	}
 }
