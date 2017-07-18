@@ -53,15 +53,29 @@ public class Tokeniser {
 			return next();
 
 		/* arithmetic operators */
-		// deal with comment
+		if (c == '+')
+			return new Token(TokenClass.PLUS, line, column);
+		if (c == '-')
+			return new Token(TokenClass.MINUS, line, column);
+		if (c == '*')
+			return new Token(TokenClass.TIMES, line, column);
+		if (c == '%')
+			return new Token(TokenClass.MOD, line, column);
 		if (c == '/') {
-			if (scanner.peek() == '/') {
-				c = scanner.next();
+			try {
+				c = scanner.peek();
+			} catch (EOFException eof) {
+				return new Token(TokenClass.DIV, line, column);
+			}
+			if (c == '/') {
+				// deal with "//" comment
+				scanner.next();
 				while (c != '\n' && c != '\r') {
 					c = scanner.next();
 				}
 				return next();
-			} else if (scanner.peek() == '*') {
+			} else if (c == '*') {
+				// deal with "/* */" comment
 				scanner.next();
 				while (true) {
 					while (scanner.next() != '*') {
@@ -76,14 +90,6 @@ public class Tokeniser {
 				return new Token(TokenClass.DIV, line, column);
 			}
 		}
-		if (c == '+')
-			return new Token(TokenClass.PLUS, line, column);
-		if (c == '-')
-			return new Token(TokenClass.MINUS, line, column);
-		if (c == '*')
-			return new Token(TokenClass.TIMES, line, column);
-		if (c == '%')
-			return new Token(TokenClass.MOD, line, column);
 
 		/* delimiters */
 		if (c == '{')
@@ -108,9 +114,12 @@ public class Tokeniser {
 					c = scanner.next();
 				}
 			} catch (EOFException eof) {
-				// deal with the last invalid token
-				error('#', line, column);
-				return new Token(TokenClass.INVALID, line, column);
+				if (sb.toString().compareTo("#include") == 0) {
+					return new Token(TokenClass.INCLUDE, line, column);
+				} else {
+					error('#', line, column);
+					return new Token(TokenClass.INVALID, line, column);
+				}
 			}
 			if (sb.toString().compareTo("#include") == 0) {
 				return new Token(TokenClass.INCLUDE, line, column);
