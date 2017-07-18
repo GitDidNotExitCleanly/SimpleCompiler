@@ -212,7 +212,13 @@ public class Tokeniser {
 				error('\'', line, column);
 				return new Token(TokenClass.INVALID, line, column);
 			}
-			return new Token(TokenClass.CHARACTER, sb.toString(), line, column);
+			if (sb.length() <= 1) {
+				return new Token(TokenClass.CHARACTER, sb.toString(), line, column);				
+			}
+			else {
+				error('\'', line, column);
+				return new Token(TokenClass.INVALID, line, column);
+			}
 		}
 		if (Character.isDigit(c)) {
 			StringBuilder sb = new StringBuilder();
