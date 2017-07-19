@@ -136,8 +136,8 @@ public class Parser {
 
 	private Program parseProgram() {
 		parseIncludes();
-		List<VarDecl> varDecls = parseDecls();
-		List<Procedure> procs = parseProcs();
+		List<VarDecl> varDecls = parseVardecls();
+		List<Procedure> procs = parseProcrep();
 		Procedure main = parseMain();
 		expect(TokenClass.EOF);
 		return new Program(varDecls, procs, main);
@@ -153,14 +153,6 @@ public class Parser {
 		} else {
 			error(TokenClass.INCLUDE, TokenClass.INT, TokenClass.CHAR, TokenClass.VOID);
 		}
-	}
-
-	private List<VarDecl> parseDecls() {
-		return parseVardecls();
-	}
-
-	private List<Procedure> parseProcs() {
-		return parseProcrep();
 	}
 
 	private Procedure parseMain() {
