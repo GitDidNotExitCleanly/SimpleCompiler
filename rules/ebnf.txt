@@ -55,8 +55,6 @@ vardecls     ::= typeident ";" vardecls
 procrep      ::= procedure procrep
 			   | EMPTY
 main         ::= "void" "main" "(" ")" body
-
-
 procedure    ::= type IDENT "(" params ")" body
 type         ::= "int" 
 			   | "char" 
@@ -68,18 +66,20 @@ typeident    ::= type IDENT
 typeidentrep ::= "," typeident typeidentrep
 			   | EMPTY
 body         ::= "{" vardecls stmtlist "}"
-
-
-exp          ::= lexp exptemp
-exptemp 	 ::= ">" lexp
-               | "<" lexp
-               | ">=" lexp
-               | "<=" lexp
-               | "!=" lexp
-               | "==" lexp
-               | EMPTY
-lexp       ::= term (("+"|"-") term)*
-term       ::= factor (("/"|"*"|"%") factor)*
+exp          ::= lexp ">" lexp
+               | lexp "<" lexp
+               | lexp ">=" lexp
+               | lexp "<=" lexp
+               | lexp "!=" lexp
+               | lexp "==" lexp
+               | lexp
+lexp       ::= term "+" lexp
+			 | term "-" lexp
+			 | term
+term       ::= factor "/" term
+			 | factor "*" term
+			 | factor "%" term
+			 | factor
 factor       ::= "(" lexp ")"
                | "-" IDENT
                | "-" NUMBER
@@ -89,15 +89,11 @@ factor       ::= "(" lexp ")"
                | funcall
 	     	   | "read_c" "(" ")"
 	     	   | "read_i" "(" ")"
-
-
 funcall      ::= IDENT "(" arglist ")"
 arglist      ::= IDENT argrep
 			   | EMPTY
 argrep       ::= "," IDENT argrep
 			   | EMPTY
-
-
 stmtlist     ::= stmt stmtlist
 			   | EMPTY			   
 stmt	     ::= "{" vardecls stmtlist "}"
