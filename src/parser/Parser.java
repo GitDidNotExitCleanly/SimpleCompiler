@@ -149,6 +149,9 @@ public class Parser {
 			nextToken();
 			expect(TokenClass.STRING_LITERAL);
 			parseIncludes();
+		} else if (accept(TokenClass.INT, TokenClass.CHAR, TokenClass.VOID)) {
+		} else {
+			error(TokenClass.INCLUDE, TokenClass.INT, TokenClass.CHAR, TokenClass.VOID);
 		}
 	}
 
@@ -227,18 +230,19 @@ public class Parser {
 			return Type.VOID;
 		} else {
 			error(TokenClass.INT, TokenClass.CHAR, TokenClass.VOID);
+			return null;
 		}
-		return null;
 	}
 
 	private List<VarDecl> parseParams() {
+		List<VarDecl> varDecls = new ArrayList<VarDecl>();
 		if (accept(TokenClass.INT, TokenClass.CHAR, TokenClass.VOID)) {
-			return parseParamlist();
+			varDecls.addAll(parseParamlist());
 		} else if (accept(TokenClass.RPAR)) {
 		} else {
 			error(TokenClass.INT, TokenClass.CHAR, TokenClass.VOID, TokenClass.RPAR);
 		}
-		return new ArrayList<VarDecl>();
+		return varDecls;
 	}
 
 	private List<VarDecl> parseParamlist() {
@@ -270,28 +274,30 @@ public class Parser {
 	}
 
 	private VarDecl parseTypeident() {
+		VarDecl varDecl = null;
 		Type type = parseType();
 		if (accept(TokenClass.IDENTIFIER)) {
 			Var var = new Var(token.data);
 			nextToken();
-			return new VarDecl(type, var);
+			varDecl = new VarDecl(type, var);
 		} else {
 			error(TokenClass.IDENTIFIER);
 		}
-		return null;
+		return varDecl;
 	}
 
 	private Stmt parseElsestmt() {
+		Stmt stmt = null;
 		if (accept(TokenClass.ELSE)) {
 			nextToken();
-			return parseStmt();
+			stmt = parseStmt();
 		} else if (accept(TokenClass.LBRA, TokenClass.RBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.IDENTIFIER,
 				TokenClass.RETURN, TokenClass.PRINT, TokenClass.READ)) {
 		} else {
 			error(TokenClass.ELSE, TokenClass.LBRA, TokenClass.RBRA, TokenClass.WHILE, TokenClass.IF,
 					TokenClass.IDENTIFIER, TokenClass.RETURN, TokenClass.PRINT, TokenClass.READ);
 		}
-		return null;
+		return stmt;
 	}
 
 	private Expr parseLexp() {
@@ -347,17 +353,18 @@ public class Parser {
 	}
 
 	private FunCallExpr parseFuncall() {
+		FunCallExpr funcallexpr = null;
 		if (accept(TokenClass.IDENTIFIER)) {
 			String name = token.data;
 			nextToken();
 			expect(TokenClass.LPAR);
 			List<Expr> exprs = parseArglist();
 			expect(TokenClass.RPAR);
-			return new FunCallExpr(name, exprs);
+			funcallexpr = new FunCallExpr(name, exprs);
 		} else {
 			error(TokenClass.IDENTIFIER);
 		}
-		return null;
+		return funcallexpr;
 	}
 
 	private List<Expr> parseArglist() {
@@ -392,6 +399,7 @@ public class Parser {
 	}
 
 	private Expr parseExp() {
+		Expr expr = null;
 		Expr lhs = parseLexp();
 		Op op = null;
 		Expr rhs = null;
@@ -399,55 +407,55 @@ public class Parser {
 			op = Op.GT;
 			nextToken();
 			rhs = parseLexp();
-			return new BinOp(lhs, op, rhs);
+			expr = new BinOp(lhs, op, rhs);
 		} else if (accept(TokenClass.LT)) {
 			op = Op.LT;
 			nextToken();
 			rhs = parseLexp();
-			return new BinOp(lhs, op, rhs);
+			expr = new BinOp(lhs, op, rhs);
 		} else if (accept(TokenClass.GE)) {
 			op = Op.GE;
 			nextToken();
 			rhs = parseLexp();
-			return new BinOp(lhs, op, rhs);
+			expr = new BinOp(lhs, op, rhs);
 		} else if (accept(TokenClass.LE)) {
 			op = Op.LE;
 			nextToken();
 			rhs = parseLexp();
-			return new BinOp(lhs, op, rhs);
+			expr = new BinOp(lhs, op, rhs);
 		} else if (accept(TokenClass.NE)) {
 			op = Op.NE;
 			nextToken();
 			rhs = parseLexp();
-			return new BinOp(lhs, op, rhs);
+			expr = new BinOp(lhs, op, rhs);
 		} else if (accept(TokenClass.EQ)) {
 			op = Op.EQ;
 			nextToken();
 			rhs = parseLexp();
-			return new BinOp(lhs, op, rhs);
+			expr = new BinOp(lhs, op, rhs);
 		} else if (accept(TokenClass.RPAR)) {
-			return lhs;
+			expr = lhs;
 		} else {
 			error(TokenClass.GT, TokenClass.LT, TokenClass.GE, TokenClass.LE, TokenClass.NE, TokenClass.EQ,
 					TokenClass.RPAR);
 		}
-		return null;
+		return expr;
 	}
 
 	private Stmt parseStmt() {
+		Stmt stmt = null;
 		if (accept(TokenClass.LBRA)) {
 			nextToken();
 			List<VarDecl> varDecls = parseVardecls();
 			List<Stmt> stmts = parseStmtlist();
 			expect(TokenClass.RBRA);
-			return new Block(varDecls, stmts);
+			stmt = new Block(varDecls, stmts);
 		} else if (accept(TokenClass.WHILE)) {
 			nextToken();
 			expect(TokenClass.LPAR);
 			Expr expr = parseExp();
 			expect(TokenClass.RPAR);
-			Stmt stmt = parseStmt();
-			return new While(expr, stmt);
+			stmt = new While(expr, parseStmt());
 		} else if (accept(TokenClass.IF)) {
 			nextToken();
 			expect(TokenClass.LPAR);
@@ -455,16 +463,16 @@ public class Parser {
 			expect(TokenClass.RPAR);
 			Stmt stmt1 = parseStmt();
 			Stmt stmt2 = parseElsestmt();
-			return new If(expr, stmt1, stmt2);
+			stmt = new If(expr, stmt1, stmt2);
 		} else if (accept(TokenClass.RETURN)) {
 			nextToken();
 			if (accept(TokenClass.SEMICOLON)) {
 				nextToken();
-				return new Return(null);
+				stmt = new Return(null);
 			} else {
 				Expr expr = parseLexp();
 				expect(TokenClass.SEMICOLON);
-				return new Return(expr);
+				stmt = new Return(expr);
 			}
 		} else if (accept(TokenClass.PRINT)) {
 			String name = token.data;
@@ -476,23 +484,24 @@ public class Parser {
 				nextToken();
 				expect(TokenClass.RPAR);
 				expect(TokenClass.SEMICOLON);
+				stmt = new FunCallStmt(name, exprs);
 			} else if (accept(TokenClass.LPAR, TokenClass.MINUS, TokenClass.IDENTIFIER, TokenClass.NUMBER,
 					TokenClass.CHARACTER, TokenClass.READ)) {
 				exprs.add(parseLexp());
 				expect(TokenClass.RPAR);
 				expect(TokenClass.SEMICOLON);
+				stmt = new FunCallStmt(name, exprs);
 			} else {
 				error(TokenClass.STRING_LITERAL, TokenClass.LPAR, TokenClass.MINUS, TokenClass.IDENTIFIER,
 						TokenClass.NUMBER, TokenClass.CHARACTER, TokenClass.READ);
 			}
-			return new FunCallStmt(name, exprs);
 		} else if (accept(TokenClass.READ)) {
 			String name = token.data;
 			nextToken();
 			expect(TokenClass.LPAR);
 			expect(TokenClass.RPAR);
 			expect(TokenClass.SEMICOLON);
-			return new FunCallStmt(name, new ArrayList<Expr>());
+			stmt = new FunCallStmt(name, new ArrayList<Expr>());
 		} else if (accept(TokenClass.IDENTIFIER)) {
 			Var var = new Var(token.data);
 			Token lookahead = lookAhead(1);
@@ -501,56 +510,56 @@ public class Parser {
 				nextToken();
 				Expr expr = parseLexp();
 				expect(TokenClass.SEMICOLON);
-				return new Assign(var, expr);
+				stmt = new Assign(var, expr);
 			} else {
 				FunCallExpr funCallExpr = parseFuncall();
 				expect(TokenClass.SEMICOLON);
-				return new FunCallStmt(funCallExpr.name, funCallExpr.exprs);
+				stmt = new FunCallStmt(funCallExpr.name, funCallExpr.exprs);
 			}
 		} else {
 			error(TokenClass.LBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.RETURN, TokenClass.PRINT,
 					TokenClass.READ, TokenClass.IDENTIFIER);
 		}
-		return null;
+		return stmt;
 	}
 
 	private Expr parseFactor() {
+		Expr expr = null;
 		if (accept(TokenClass.LPAR)) {
 			nextToken();
-			Expr expr = parseLexp();
+			expr = parseLexp();
 			expect(TokenClass.RPAR);
-			return expr;
 		} else if (accept(TokenClass.MINUS)) {
 			nextToken();
 			if (accept(TokenClass.IDENTIFIER)) {
 				Var var = new Var(token.data);
 				nextToken();
-				return new BinOp(new IntLiteral(0), Op.SUB, var);
+				expr = new BinOp(new IntLiteral(0), Op.SUB, var);
 			} else if (accept(TokenClass.NUMBER)) {
 				IntLiteral il = new IntLiteral(Integer.valueOf(token.data));
 				nextToken();
-				return new BinOp(new IntLiteral(0), Op.SUB, il);
+				expr = new BinOp(new IntLiteral(0), Op.SUB, il);
 			} else {
 				error(TokenClass.IDENTIFIER, TokenClass.NUMBER);
 			}
 		} else if (accept(TokenClass.NUMBER)) {
 			IntLiteral il = new IntLiteral(Integer.valueOf(token.data));
 			nextToken();
-			return il;
+			expr = il;
 		} else if (accept(TokenClass.CHARACTER)) {
 			ChrLiteral cl = new ChrLiteral(token.data.charAt(0));
 			nextToken();
-			return cl;
+			expr = cl;
 		} else if (accept(TokenClass.READ)) {
 			String name = token.data;
 			nextToken();
 			expect(TokenClass.LPAR);
 			expect(TokenClass.RPAR);
-			return new FunCallExpr(name, new ArrayList<Expr>());
+			expr = new FunCallExpr(name, new ArrayList<Expr>());
 		} else if (accept(TokenClass.IDENTIFIER)) {
 			Token lookahead = lookAhead(1);
 			if (lookahead.tokenClass == TokenClass.LPAR) {
-				return parseFuncall();
+				expr = parseFuncall();
 			} else if (lookahead.tokenClass == TokenClass.DIV || lookahead.tokenClass == TokenClass.TIMES
 					|| lookahead.tokenClass == TokenClass.MOD || lookahead.tokenClass == TokenClass.PLUS
 					|| lookahead.tokenClass == TokenClass.MINUS || lookahead.tokenClass == TokenClass.GT
@@ -560,7 +569,7 @@ public class Parser {
 					|| lookahead.tokenClass == TokenClass.RPAR) {
 				Var var = new Var(token.data);
 				nextToken();
-				return var;
+				expr = var;
 			} else {
 				nextToken();
 				error(TokenClass.LPAR, TokenClass.DIV, TokenClass.TIMES, TokenClass.MOD, TokenClass.PLUS,
@@ -571,7 +580,7 @@ public class Parser {
 			error(TokenClass.LPAR, TokenClass.MINUS, TokenClass.NUMBER, TokenClass.CHARACTER, TokenClass.READ,
 					TokenClass.IDENTIFIER);
 		}
-		return null;
+		return expr;
 	}
 
 	private List<VarDecl> parseVardecls() {
